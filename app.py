@@ -3,7 +3,7 @@ import joblib
 import numpy as np
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,17 +26,11 @@ def index():
         credit_limit = int(request.form["credit_limit"])
         spend = int(request.form["spend"])
 
-        
         employment_encoded = 1 if employment == "Self-Employed" else 0
-
-        
         credit_util = spend / credit_limit
 
-        
-        X = np.array([[age, income, credit_limit,
-                       spend, credit_util, employment_encoded]])
+        X = np.array([[age, income, credit_limit, spend, credit_util, employment_encoded]])
 
-        
         X_scaled = scaler.transform(X)
         risk_pred = risk_model.predict(X_scaled)[0]
         risk_prob = risk_model.predict_proba(X_scaled)[0][risk_pred]
@@ -58,6 +52,7 @@ def index():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
